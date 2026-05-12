@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corpus — Indian Startup Fundraising Compliance</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f0f0f;
+    color: #e8e8e8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 18px 28px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #111;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    color: #6366f1;
+  }
+
+  .badge {
+    font-size: 11px;
+    background: #1e1e2e;
+    color: #6366f1;
+    border: 1px solid #6366f144;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .message {
+    padding: 16px 28px;
+    display: flex;
+    gap: 14px;
+    max-width: 100%;
+  }
+
+  .message.user {
+    background: #161616;
+  }
+
+  .message.assistant {
+    background: #111;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .avatar.user-av {
+    background: #1e1e2e;
+    color: #6366f1;
+  }
+
+  .avatar.ai-av {
+    background: #6366f1;
+    color: #fff;
+  }
+
+  .msg-content {
+    flex: 1;
+    line-height: 1.65;
+    font-size: 15px;
+    color: #ddd;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .msg-content strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .msg-content h3 {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 14px 0 6px;
+  }
+
+  .msg-content ul, .msg-content ol {
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+
+  .msg-content li {
+    margin: 4px 0;
+  }
+
+  .msg-content code {
+    background: #1e1e2e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #a5b4fc;
+  }
+
+  .welcome {
+    max-width: 680px;
+    margin: 40px auto;
+    padding: 0 28px;
+    text-align: center;
+  }
+
+  .welcome h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .welcome p {
+    color: #888;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .chip {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #ccc;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .chip:hover {
+    background: #1e1e2e;
+    border-color: #6366f1;
+    color: #fff;
+  }
+
+  .input-area {
+    padding: 16px 28px 24px;
+    background: #111;
+    border-top: 1px solid #1e1e1e;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    max-width: 860px;
+    margin: 0 auto;
+    align-items: flex-end;
+  }
+
+  textarea {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #e8e8e8;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: none;
+    min-height: 48px;
+    max-height: 160px;
+    outline: none;
+    transition: border 0.15s;
+    line-height: 1.5;
+  }
+
+  textarea:focus {
+    border-color: #6366f1;
+  }
+
+  textarea::placeholder {
+    color: #555;
+  }
+
+  button#send {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s;
+    height: 48px;
+    white-space: nowrap;
+  }
+
+  button#send:hover { background: #5254cc; }
+  button#send:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+
+  .typing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 20px 28px;
+    background: #111;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    background: #6366f1;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  .sources {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .source-tag {
+    font-size: 11px;
+    background: #1a1a2e;
+    color: #818cf8;
+    border: 1px solid #6366f122;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Cor<span>pus</span></div>
+  <div class="badge">Indian Startup Fundraising</div>
+</header>
+
+<div class="chat-area" id="chatArea">
+  <div class="welcome" id="welcome">
+    <h1>Corpus</h1>
+    <p>AI-powered compliance for Indian startup fundraising — grounded in Companies Act 2013, FEMA, and NDI Rules.</p>
+    <div class="chips">
+      <div class="chip" onclick="sendChip(this)">Can a private company issue CCDs to foreign investors?</div>
+      <div class="chip" onclick="sendChip(this)">What are the compliance steps for a private placement of equity shares?</div>
+      <div class="chip" onclick="sendChip(this)">Explain voting rights for preference shareholders under Section 47</div>
+      <div class="chip" onclick="sendChip(this)">What is the maximum number of investors in a private placement?</div>
+      <div class="chip" onclick="sendChip(this)">When does a variation of shareholders' rights require a special resolution?</div>
+      <div class="chip" onclick="sendChip(this)">CCPS vs CCD — which is better for a seed round?</div>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-row">
+    <textarea id="input" placeholder="Ask about fundraising compliance, share issuances, FEMA, NDI Rules..." rows="1"
+      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="send" onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are Corpus — a specialised legal AI for Indian startup fundraising compliance. You are built for lawyers, company secretaries, and founders working on startup transactions in India.
+
+Your knowledge base covers:
+
+COMPANIES ACT 2013 — KEY SECTIONS:
+- Section 42: Private Placement — offer/invitation for securities to identified persons not exceeding 50 (or higher as prescribed, excluding QIBs and ESOP employees) in a financial year. Allotment must be within 60 days; application money in separate bank account; no public advertisements; return of allotment within 15 days. Non-compliance = deemed public offer.
+- Section 43: Kinds of Share Capital — equity share capital (with voting rights, or with differential rights as to dividend/voting) and preference share capital. Equity = all share capital that is not preference. Preference capital has preferential rights to dividend (fixed amount/rate) and repayment on winding up.
+- Section 47: Voting Rights — equity shareholders vote on every resolution; voting right on poll proportional to paid-up equity capital. Preference shareholders vote only on resolutions directly affecting their rights or winding up/reduction of capital; voting proportional to paid-up preference capital. If preference dividend unpaid for 2+ years, preference shareholders get full voting rights. In Nidhi companies, no member exercises >5% voting rights on poll.
+- Section 48: Variation of Shareholders' Rights — variation of rights attached to any class of shares requires (a) written consent of 3/4 holders of issued shares of that class, OR (b) special resolution at separate class meeting. If variation affects another class, that class also needs 3/4 consent. Holders of 10%+ who did not consent can apply to Tribunal within 21 days to cancel variation.
+- Section 55: Preference Shares — company cannot issue irredeemable preference shares. Preference shares must be redeemed within 20 years. Exception for infrastructure companies (up to 30 years with mandatory redemption of 10% annually from 21st year). CCPS (Compulsorily Convertible Preference Shares) must convert within 20 years.
+- Section 62: Further Issue of Share Capital — rights issue (to existing equity shareholders in proportion to paid-up capital, offer open for minimum 15 days / as prescribed, not exceeding 30 days); ESOP (employees' stock option, by special resolution, with prescribed conditions); preferential allotment (to any persons, by special resolution, price determined by registered valuer per Chapter III). Notice to be sent by registered post/speed post/electronic mode/courier at least 3 days before issue opening.
+
+FEMA & NDI RULES 2019:
+- Foreign investment in Indian startups governed by FEMA 20(R) / NDI Rules 2019
+- Automatic route available for most sectors; government route for restricted sectors
+- Prohibited sectors: lottery, gambling, chit funds, Nidhi company, real estate (except certain cases), tobacco manufacturing
+- Eligible instruments for foreign investment: equity shares, CCPS, CCDs (Compulsorily Convertible Debentures), share warrants
+- Optionality clauses prohibited: no instrument can carry assured returns, a put option exercisable against the Indian company/resident, or any guaranteed exit at a fixed price — this would reclassify as debt/ECB
+- Pricing: on entry, foreign investor must pay price not less than fair value (DCF for unlisted companies per SEBI guidelines). On exit, price must not exceed fair value at time of exit.
+- Convertible instruments: CCPS and CCDs are treated as equity for FDI purposes ONLY if they are mandatorily convertible, not optionally convertible. Optional convertibles = debt = ECB framework applies.
+- Convertible Notes: available only for DPIIT-recognised startups from foreign investors. Minimum investment USD 2,00,000 in single tranche. Must convert to equity or be repaid within 10 years.
+- Downstream investment: Indian companies with foreign investment making further investment in other Indian companies must comply with FDI sectoral conditions.
+- Reporting: FC-GPR to be filed on Firms portal within 30 days of allotment. KYC of foreign investor required.
+
+KEY DRAFTING PRINCIPLES YOU APPLY:
+- For CCPS: confirm mandatory conversion trigger events (qualified financing round, IPO, deemed liquidation), no cash redemption optionality for investor, 20-year outer limit, anti-dilution (broad-based weighted average preferred), liquidation preference (1x non-participating preferred standard), dividend (non-cumulative standard for early stage).
+- For CCDs: confirm mandatory conversion, no put option against company, conversion formula linked to equity valuation.
+- For SHA/SSA: check reserved matters, drag-along/tag-along, right of first refusal, right of first offer, information rights, board composition, affirmative voting rights.
+- For private placements: confirm identified persons list, 50-person cap, board resolution, PAS-4 offer letter, PAS-5 register, Form PAS-3 allotment return within 15 days.
+- For rights issue: confirm Section 62(1)(a) compliance, offer period, renunciation rights, board/shareholder resolutions.
+
+RESPONSE STYLE:
+- Be precise and practical — you are talking to a lawyer or transaction professional
+- Cite the specific section/rule/regulation when answering
+- Flag compliance risks clearly
+- For structuring questions, give pros/cons clearly
+- Keep answers focused — no unnecessary padding
+- If a question involves a live transaction, ask for the specific facts before advising
+- Always flag when FEMA/RBI approval or reporting is required`;
+
+let messages = [];
+let isLoading = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function sendChip(el) {
+  document.getElementById('input').value = el.textContent;
+  sendMessage();
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^- (.*$)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function addMessage(role, content) {
+  const chatArea = document.getElementById('chatArea');
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role === 'user' ? 'user-av' : 'ai-av'}`;
+  avatar.textContent = role === 'user' ? 'You' : 'AI';
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'msg-content';
+
+  if (role === 'assistant') {
+    msgDiv.innerHTML = formatText(content);
+  } else {
+    msgDiv.textContent = content;
+  }
+
+  div.appendChild(avatar);
+  div.appendChild(msgDiv);
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  return msgDiv;
+}
+
+function showTyping() {
+  const chatArea = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'typing';
+  div.id = 'typing';
+  div.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('send').disabled = true;
+
+  addMessage('user', text);
+  messages.push({ role: 'user', content: text });
+
+  showTyping();
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-20250514',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: messages
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+
+    if (data.error) {
+      addMessage('assistant', 'Error: ' + (data.error.message || data.error));
+    } else {
+      const reply = data.content[0].text;
+      messages.push({ role: 'assistant', content: reply });
+      addMessage('assistant', reply);
+    }
+  } catch (err) {
+    removeTyping();
+    addMessage('assistant', 'Connection error. Please check your deployment settings and try again.');
+  }
+
+  isLoading = false;
+  document.getElementById('send').disabled = false;
+}
+</script>
+</body>
+</html>
